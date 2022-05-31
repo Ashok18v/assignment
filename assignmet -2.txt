@@ -1,0 +1,146 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace cinema
+{
+    public class admin
+    {
+        public void movies()
+        {
+            string movie_name;
+            DateTime Timings;
+            int seats;
+            Console.WriteLine("enter the movie name");
+            movie_name = Console.ReadLine();
+            Console.WriteLine("timing(hh:mm)");
+            Timings = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("No.of seats available in theatre");
+            seats = Convert.ToInt32(Console.ReadLine());
+            List<object> admins = new List<object>();
+
+            admins.Add(movie_name);
+            admins.Add(Timings);
+            admins.Add(seats);
+
+            FileStream fs = new FileStream(@"C:\visual\movie.txt", FileMode.Append, FileAccess.Write);
+            StreamWriter streamWriter = new StreamWriter(fs);
+            streamWriter.WriteLine("Movie name:" + admins[0]);
+            streamWriter.WriteLine("Timings:" + admins[1]);
+            streamWriter.WriteLine("Seats:" + admins[2]);
+            streamWriter.Close();
+            fs.Close();
+
+        }
+
+    }
+    internal class user
+
+    {
+        string seat;
+        public void search_movie()
+        {
+            FileStream fs = new FileStream(@"C:\visual\movie.txt", FileMode.Open, FileAccess.Read);
+            StreamReader sw = new StreamReader(fs);
+            string[] line = new string[sw.Peek()];
+            if (sw.Peek() > 0)
+            {
+                for (int i = 0; i < sw.Peek(); i++)
+                {
+                    line[i] = sw.ReadLine();
+
+                }
+            }
+            sw.Close();
+            fs.Close();
+            line = line.Where(c => c != null).ToArray();
+            Console.WriteLine("Avaliable movies");
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i].StartsWith("Movie name"))
+                {
+
+                    Console.WriteLine(line[i]);
+
+                }
+            }
+
+            Console.WriteLine("Enter the movie name");
+            string a = Console.ReadLine();
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i].Contains(a))
+                {
+                    Console.WriteLine(line[i]);
+                    Console.WriteLine(line[i + 1]);
+                    Console.WriteLine(line[i + 2]);
+                    seat = line[i + 2];
+
+                }
+
+            }
+        }
+        public void booking()
+        {
+            string[] m = seat.Split(':');
+            int seats = Convert.ToInt32(m[1]);
+            Console.WriteLine("--------------------SCREEN--------------------");
+
+            for (int i = 1; i <= seats; i++)
+            {
+                if (i % 10 == 0)
+                {
+                    Console.WriteLine(i);
+                }
+
+                else
+                {
+                    Console.Write(i + "\t");
+
+                }
+            }
+            Console.WriteLine("no. of tickest to book");
+            int fnm = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter the seat numbers");
+
+
+            IDictionary<int, string> book = new Dictionary<int, string>();
+            for (int i = 0; i < fnm; i++)
+            {
+                book.Add(Convert.ToInt32(Console.ReadLine()), "Booked");
+            }
+
+                foreach (var items in book)
+                {
+                    Console.WriteLine(items.Key + "\t" + items.Value);
+                }
+            
+        }
+
+
+        static void Main(string[] args)
+        {//admin admin = new admin();
+        // admin.movies();
+            user user = new user();
+            user.search_movie();
+            Console.WriteLine("Are u want to Book tickets? Yes or No");
+            string Bp = Console.ReadLine();
+
+            if (Bp == "Yes")
+            {
+                user.booking();
+            }
+          else
+            {
+                user.search_movie();
+           }
+
+
+
+
+        }
+    }
+}
